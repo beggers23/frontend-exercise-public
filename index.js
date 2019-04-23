@@ -1,4 +1,5 @@
 /* eslint-disable no-new */
+import 'babel-polyfill';
 import Autocomplete from './Autocomplete';
 import usStates from './us-states';
 import './main.css';
@@ -9,7 +10,8 @@ const data = usStates.map(state => ({
   text: state.name,
   value: state.abbreviation,
 }));
-new Autocomplete(document.getElementById('state'), {
+
+const stateAuto = new Autocomplete(document.getElementById('state'), {
   data,
   onSelect: (stateCode) => {
     console.log('selected state:', stateCode);
@@ -18,8 +20,18 @@ new Autocomplete(document.getElementById('state'), {
 
 
 // Github Users
-new Autocomplete(document.getElementById('gh-user'), {
+const ghAuto = new Autocomplete(document.getElementById('gh-user'), {
+  endpoint: 'https://api.github.com/search/users',
+  getUserData: async (query, endpoint, numOfResults) => {
+    const response = await fetch(`${endpoint}?q=${query}&per_page=${numOfResults}`)
+    const json = await response.json();
+    return json.items;
+  },
   onSelect: (ghUserId) => {
     console.log('selected github user id:', ghUserId);
   },
 });
+
+stateAuto.rootEl.addEventListener('keyup', (e) => {
+  console.log(stateAuto.rootEl.childNodes);
+})

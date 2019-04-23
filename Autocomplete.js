@@ -13,9 +13,15 @@ export default class Autocomplete {
   /**
    * Given an array and a query, return a filtered array based on the query.
    */
-  getResults(query, data) {
+  async getResults(query, data) {
     if (!query) return [];
-
+    if(this.options.endpoint !== undefined) {
+      const details = await this.options.getUserData(query, this.options.endpoint, this.options.numOfResults);
+      data = details.map(users => ({
+        text: users.login,
+        value: users.id,
+      }));
+    }
     // Filter for matching strings
     return data.filter((item) => {
       return item.text.toLowerCase().includes(query.toLowerCase());
@@ -24,10 +30,10 @@ export default class Autocomplete {
 
   onQueryChange(query) {
     // Get data for the dropdown
-    let results = this.getResults(query, this.options.data);
-    results = results.slice(0, this.options.numOfResults);
-
-    this.updateDropdown(results);
+    this.getResults(query, this.options.data).then((res) => {
+      res = res.slice(0, this.options.numOfResults);
+      this.updateDropdown(res);
+    });
   }
 
   updateDropdown(results) {
@@ -61,7 +67,6 @@ export default class Autocomplete {
 
     inputEl.addEventListener('input',
       event => this.onQueryChange(event.target.value));
-
     return inputEl;
   }
 
