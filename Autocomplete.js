@@ -47,7 +47,7 @@ export default class Autocomplete {
       const el = document.createElement('li');
       el.classList.add('result');
       el.textContent = result.text;
-
+      el.setAttribute('data-value', result.value);
       // Pass the value to the onSelect callback
       el.addEventListener('click', () => {
         const { onSelect } = this.options;

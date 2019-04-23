@@ -35,6 +35,9 @@ ul {
 .result:hover {
   background-color: #eee;
 }
+.result.highlighted {
+  background-color: #eee;
+}
 
 form {
   display: flex;
