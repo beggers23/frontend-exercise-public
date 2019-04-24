@@ -13,14 +13,10 @@ export default class Autocomplete {
   /**
    * Given an array and a query, return a filtered array based on the query.
    */
-  async getResults(query, data) {
+  async getResults(query, data) { // * Updated this function to run asynchronously
     if (!query) return [];
-    if(this.options.endpoint !== undefined) {
-      const details = await this.options.getUserData(query, this.options.endpoint, this.options.numOfResults);
-      data = details.map(users => ({
-        text: users.login,
-        value: users.id,
-      }));
+    if(this.options.endpoint !== undefined) { // ! Added this conditional to run the logic supplied on component construction
+      data = await this.options.getUserData(query, this.options.endpoint, this.options.numOfResults);
     }
     // Filter for matching strings
     return data.filter((item) => {
@@ -30,7 +26,7 @@ export default class Autocomplete {
 
   onQueryChange(query) {
     // Get data for the dropdown
-    this.getResults(query, this.options.data).then((res) => {
+    this.getResults(query, this.options.data).then((res) => { // * Forced this function to continue once the async this.getResults call completed so it would wait for a response from the github api.
       res = res.slice(0, this.options.numOfResults);
       this.updateDropdown(res);
     });
@@ -47,7 +43,7 @@ export default class Autocomplete {
       const el = document.createElement('li');
       el.classList.add('result');
       el.textContent = result.text;
-      el.setAttribute('data-value', result.value);
+      el.setAttribute('data-value', result.value); // ! Popped this little attribue in for the front end return of data
       // Pass the value to the onSelect callback
       el.addEventListener('click', () => {
         const { onSelect } = this.options;

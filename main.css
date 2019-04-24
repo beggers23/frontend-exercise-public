@@ -32,10 +32,7 @@ ul {
   padding: 5px;
   cursor: pointer;
 }
-.result:hover {
-  background-color: #eee;
-}
-.result.highlighted {
+.result:hover, .result.highlighted {
   background-color: #eee;
 }
 
